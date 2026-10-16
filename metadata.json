@@ -1,0 +1,6 @@
+{
+  "name": "UEFA Match Pulse",
+  "description": "Расписание матчей Лиги Чемпионов и Лиги Европы с ежедневным обновлением и уведомлениями",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
