@@ -198,4 +198,22 @@ class TeamBadgeProviderTest {
             TeamBadgeProvider.getFastBadgeUrl(null, "Fenerbahçe")!!.contains("/613.png")
         )
     }
+
+    @Test
+    fun testDinamoZagrebAndAnderlechtUseVerifiedOpenCatalogCrests() {
+        val dinamo = TeamBadgeProvider.getFastBadgeUrl(null, "GNK Dinamo")
+        val dinamoRu = TeamBadgeProvider.getFastBadgeUrl(null, "Динамо Загреб")
+        val anderlecht = TeamBadgeProvider.getFastBadgeUrl(null, "Anderlecht")
+        val anderlechtRu = TeamBadgeProvider.getFastBadgeUrl(null, "Андерлехт")
+
+        assertNotNull(dinamo)
+        assertNotNull(anderlecht)
+        assertTrue(dinamo!!.contains("Dinamo%20Zagreb.png") || dinamo.contains("Dinamo Zagreb"))
+        assertTrue(anderlecht!!.contains("Anderlecht.png"))
+        assertEquals(dinamo, dinamoRu)
+        assertEquals(anderlecht, anderlechtRu)
+        // Старые битые/чужие football-data ID больше не используются
+        assertFalse(dinamo.contains("/1897.png"))
+        assertFalse(anderlecht.contains("/660.png"))
+    }
 }

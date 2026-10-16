@@ -107,7 +107,12 @@ object TeamCrestCatalog {
         entry("dynamo_kyiv", listOf("dynamo kyiv", "dinamo kyiv", "kyiv", "киев", "динамо киев"), fd(1873)),
 
         // Балканы
-        entry("dinamo_zagreb", listOf("dinamo zagreb", "загреб", "dinamo"), fd(1897)),
+        // fd(1897) был placeholder: PNG отдаётся, но это не герб Динамо Загреб.
+        entry(
+            "dinamo_zagreb",
+            listOf("dinamo zagreb", "gnk dinamo", "загреб", "динамо загреб", "dinamo"),
+            jd("logos/Croatia%20-%20SuperSport%20HNL/GNK%20Dinamo%20Zagreb.png")
+        ),
         entry("crvena_zvezda", listOf("crvena zvezda", "zvezda", "црвена", "звезда"), fd(1898)),
         entry("celje", listOf("celje", "целе"), fd(1890)),
 
@@ -154,7 +159,12 @@ object TeamCrestCatalog {
         // Бельгия
         entry("club_brugge", listOf("club brugge", "brugge", "брюгге"), fd(851), 0xFF0066B2, 0xFF111111),
         entry("union_sg", listOf("union sg", "юнион", "saint-gilloise"), fd(688)),
-        entry("anderlecht", listOf("anderlecht", "андерлехт"), fd(660)),
+        // fd(660) → 404 на crests.football-data.org
+        entry(
+            "anderlecht",
+            listOf("anderlecht", "rsc anderlecht", "андерлехт"),
+            jd("logos/Belgium%20-%20Jupiler%20Pro%20League/RSC%20Anderlecht.png")
+        ),
 
         // Прочие еврокубки — уникальные URL (раньше были коллизии ID)
         entry(
