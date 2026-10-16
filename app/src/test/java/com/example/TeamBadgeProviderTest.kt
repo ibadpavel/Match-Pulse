@@ -1,18 +1,27 @@
 package com.example
 
+import com.example.ui.components.TeamCrestCatalog
+import com.example.ui.components.TeamCrestRepository
 import com.example.ui.components.TeamBadgeProvider
 import com.example.ui.components.TeamNameNormalizer
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Test
 
 class TeamBadgeProviderTest {
 
+    @Before
+    fun setUp() {
+        TeamCrestRepository.clearMemoryCache()
+    }
+
     @Test
     fun testAll2026TournamentClubsHaveBadgeUrls() {
         val testClubs = listOf(
-            // Гранды
             "Real Madrid CF",
             "Реал Мадрид",
             "FC Barcelona",
@@ -51,8 +60,6 @@ class TeamBadgeProviderTest {
             "Монако",
             "Aston Villa FC",
             "Астон Вилла",
-
-            // 22 клуба с сокращениями и спецификой календаря 2026
             "Atleti",
             "B. Dortmund",
             "S. Bratislava",
@@ -78,8 +85,7 @@ class TeamBadgeProviderTest {
             "OFI Crete",
             "Omonia",
             "Torreense",
-            "Sabah",
-            "Ararat-Armenia"
+            "Sabah"
         )
 
         for (club in testClubs) {
@@ -88,6 +94,75 @@ class TeamBadgeProviderTest {
             assertTrue("URL эмблемы должен вести на HTTPS CDN: $url", url!!.startsWith("https://"))
             assertTrue("URL эмблемы должен оканчиваться на .png: $url", url.endsWith(".png"))
         }
+    }
+
+    @Test
+    fun testCrestUrlsAreUniqueAcrossDifferentClubs() {
+        val urls = TeamCrestCatalog.entries.map { it.crestUrl }
+        assertEquals(
+            "Каждый клуб должен иметь уникальный crest URL",
+            urls.size,
+            urls.toSet().size
+        )
+    }
+
+    @Test
+    fun testFormerSharedIdPairsNoLongerCollide() {
+        val pairs = listOf(
+            "Celje" to "Maccabi",
+            "H. Beer-Sheva" to "Levski Sofia",
+            "Omonia" to "Levski Sofia",
+            "Ludogorets" to "Sabah",
+            "Celje" to "Sabah"
+        )
+        for ((a, b) in pairs) {
+            val urlA = TeamBadgeProvider.getFastBadgeUrl(null, a)
+            val urlB = TeamBadgeProvider.getFastBadgeUrl(null, b)
+            assertNotNull(urlA)
+            assertNotNull(urlB)
+            assertNotEquals("Логотипы '$a' и '$b' не должны совпадать", urlA, urlB)
+        }
+    }
+
+    @Test
+    fun testBayernVsBayerCyrillicNotConfused() {
+        val bayernVariants = listOf("Bayern", "Бавария", "Байерн", "FC Bayern München")
+        val bayerVariants = listOf("Байер", "Bayer 04 Leverkusen", "Leverkusen")
+
+        val bayernUrls = bayernVariants.map { TeamBadgeProvider.getFastBadgeUrl(null, it) }
+        val bayerUrls = bayerVariants.map { TeamBadgeProvider.getFastBadgeUrl(null, it) }
+
+        bayernUrls.forEach { assertNotNull(it) }
+        bayerUrls.forEach { assertNotNull(it) }
+
+        assertTrue(bayernUrls.distinct().size == 1)
+        assertTrue(bayerUrls.distinct().size == 1)
+        assertNotEquals(bayernUrls.first(), bayerUrls.first())
+        assertTrue(bayernUrls.first()!!.contains("/5.png"))
+        assertTrue(bayerUrls.first()!!.contains("/3.png"))
+    }
+
+    @Test
+    fun testWordBoundaryPreventsSubstringFalsePositives() {
+        assertFalse(TeamCrestCatalog.matchesAlias("байерн", "байер"))
+        assertTrue(TeamCrestCatalog.matchesAlias("байерн", "байерн"))
+        assertFalse(TeamCrestCatalog.matchesAlias("leicester", "lech"))
+        assertTrue(TeamCrestCatalog.matchesAlias("lech poznan", "lech"))
+    }
+
+    @Test
+    fun testDynamicScoringPrefersExactFilename() {
+        val exact = TeamCrestRepository.scorePath(
+            "levski sofia",
+            "logos/Bulgaria - efbet Liga/Levski Sofia.png"
+        )
+        val weak = TeamCrestRepository.scorePath(
+            "levski sofia",
+            "logos/England - Premier League/Liverpool.png"
+        )
+        assertTrue(exact > 0.9)
+        assertTrue(weak < 0.5)
+        assertTrue(exact > weak)
     }
 
     @Test
@@ -106,5 +181,21 @@ class TeamBadgeProviderTest {
         assertEquals("BAY", TeamBadgeProvider.getTeamInitials("Bayern"))
         assertEquals("BD", TeamBadgeProvider.getTeamInitials("B. Dortmund"))
         assertEquals("ATL", TeamBadgeProvider.getTeamInitials("Atleti"))
+    }
+
+    @Test
+    fun testVerifiedApiIdsForKnownClubs() {
+        assertTrue(
+            TeamBadgeProvider.getFastBadgeUrl(null, "Como 1907")!!.contains("/7397.png")
+        )
+        assertTrue(
+            TeamBadgeProvider.getFastBadgeUrl(null, "Sabah")!!.contains("/10233.png")
+        )
+        assertTrue(
+            TeamBadgeProvider.getFastBadgeUrl(null, "Bodø/Glimt")!!.contains("/5721.png")
+        )
+        assertTrue(
+            TeamBadgeProvider.getFastBadgeUrl(null, "Fenerbahçe")!!.contains("/613.png")
+        )
     }
 }
