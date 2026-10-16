@@ -198,4 +198,76 @@ class TeamBadgeProviderTest {
             TeamBadgeProvider.getFastBadgeUrl(null, "Fenerbahçe")!!.contains("/613.png")
         )
     }
+
+    @Test
+    fun testDinamoZagrebAndAnderlechtUseVerifiedOpenCatalogCrests() {
+        val dinamo = TeamBadgeProvider.getFastBadgeUrl(null, "GNK Dinamo")
+        val dinamoRu = TeamBadgeProvider.getFastBadgeUrl(null, "Динамо Загреб")
+        val anderlecht = TeamBadgeProvider.getFastBadgeUrl(null, "Anderlecht")
+        val anderlechtRu = TeamBadgeProvider.getFastBadgeUrl(null, "Андерлехт")
+
+        assertNotNull(dinamo)
+        assertNotNull(anderlecht)
+        assertTrue(dinamo!!.contains("Dinamo%20Zagreb.png") || dinamo.contains("Dinamo Zagreb"))
+        assertTrue(anderlecht!!.contains("Anderlecht.png"))
+        assertEquals(dinamo, dinamoRu)
+        assertEquals(anderlecht, anderlechtRu)
+        // Старые битые/чужие football-data ID больше не используются
+        assertFalse(dinamo.contains("/1897.png"))
+        assertFalse(anderlecht.contains("/660.png"))
+    }
+
+    @Test
+    fun testAllEuropaLeague2026FixtureClubsResolveToDistinctCrests() {
+        // Имена как на fixturedownload.com/results/europa-league-2026
+        val elClubs = listOf(
+            "AZ Alkmaar", "Anderlecht", "Ararat-Armenia", "Benfica", "Besiktas",
+            "Bournemouth", "Celje", "Celta", "Celtic", "Crystal Palace",
+            "Ferencváros", "GNK Dinamo", "H. Beer-Sheva", "Hoffenheim", "Jagiellonia",
+            "Juventus", "Lech Poznan", "Leverkusen", "Levski Sofia", "Lillestrøm",
+            "Lyon", "Marseille", "Milan", "N.E.C.", "OFI Crete",
+            "Olympiacos", "Omonia", "Real Sociedad", "Rennes", "Salzburg",
+            "Sparta Praha", "Sturm Graz", "Sunderland", "Torreense", "Union SG",
+            "Viktoria Plzen"
+        )
+        val urls = mutableMapOf<String, String>()
+        for (club in elClubs) {
+            val url = TeamBadgeProvider.getFastBadgeUrl(null, club)
+            assertNotNull("ЛЕ клуб '$club' должен иметь crest URL", url)
+            assertTrue(url!!.startsWith("https://"))
+            // Старые битые FD id для клубов ЛЕ
+            assertFalse("$club still on broken Union id", url.contains("/688.png"))
+            assertFalse("$club still on broken PAOK id", url.contains("/656.png"))
+            urls[club] = url
+        }
+        assertEquals(36, urls.size)
+        // Разные клубы — разные URL (кроме явных алиасов одной команды)
+        assertEquals(
+            "Каждый клуб ЛЕ должен иметь уникальный crest URL",
+            urls.values.toSet().size,
+            urls.size
+        )
+    }
+
+    @Test
+    fun testCriticalElBrokenIdsAreGone() {
+        assertFalse(
+            TeamBadgeProvider.getFastBadgeUrl(null, "Union SG")!!.contains("/688.png")
+        )
+        assertTrue(
+            TeamBadgeProvider.getFastBadgeUrl(null, "Union SG")!!.contains("Union")
+        )
+        assertTrue(
+            TeamBadgeProvider.getFastBadgeUrl(null, "Ararat-Armenia")!!.contains("thesportsdb")
+        )
+        assertTrue(
+            TeamBadgeProvider.getFastBadgeUrl(null, "Lillestrøm")!!.contains("Lillestr")
+        )
+        assertFalse(
+            TeamBadgeProvider.getFastBadgeUrl(null, "Celje")!!.contains("/1890.png")
+        )
+        assertFalse(
+            TeamBadgeProvider.getFastBadgeUrl(null, "Omonia")!!.contains("/1894.png")
+        )
+    }
 }
