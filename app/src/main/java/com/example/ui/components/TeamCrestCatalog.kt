@@ -18,6 +18,8 @@ object TeamCrestCatalog {
 
     private const val FD = "https://crests.football-data.org"
     private const val JD = "https://cdn.jsdelivr.net/gh/luukhopman/football-logos@master"
+    /** TheSportsDB badge CDN — fallback, когда FD/jsDelivr недоступны или ID неверны. */
+    private const val TSDB = "https://r2.thesportsdb.com/images/media/team/badge"
 
     /** Все записи каталога. URL эмблем обязаны быть уникальны между разными key. */
     val entries: List<TeamCrestEntry> = listOf(
@@ -41,7 +43,11 @@ object TeamCrestCatalog {
         entry("aston_villa", listOf("aston villa", "астон вилла"), fd(58)),
         entry("chelsea", listOf("chelsea", "челси"), fd(61), 0xFF034694, 0xFFDBA111),
         entry("tottenham", listOf("tottenham", "тоттенхэм", "spurs"), fd(73)),
-        entry("crystal_palace", listOf("crystal palace", "palace", "пэлас"), fd(354)),
+        entry(
+            "crystal_palace",
+            listOf("crystal palace", "palace", "пэлас"),
+            jd("logos/England%20-%20Premier%20League/Crystal%20Palace.png")
+        ),
         entry("bournemouth", listOf("bournemouth", "борнмут"), fd(1044)),
         entry("sunderland", listOf("sunderland", "сандерленд"), fd(71)),
 
@@ -52,7 +58,11 @@ object TeamCrestCatalog {
         entry("leipzig", listOf("leipzig", "лейпциг"), fd(721)),
         entry("stuttgart", listOf("stuttgart", "штутгарт"), fd(10)),
         entry("frankfurt", listOf("frankfurt", "франкфурт", "айнтрахт"), fd(19)),
-        entry("hoffenheim", listOf("hoffenheim", "хоффенхайм"), fd(2)),
+        entry(
+            "hoffenheim",
+            listOf("hoffenheim", "хоффенхайм"),
+            jd("logos/Germany%20-%20Bundesliga/TSG%201899%20Hoffenheim.png")
+        ),
 
         // Италия
         entry("inter", listOf("internazionale", "inter milan", "inter", "интер"), fd(108), 0xFF001489, 0xFF111111),
@@ -82,23 +92,39 @@ object TeamCrestCatalog {
         entry("benfica", listOf("benfica", "бенфика"), fd(1903), 0xFFE8112D, 0xFFFFFFFF),
         entry("porto", listOf("porto", "порту"), fd(503), 0xFF0038A8, 0xFFFFFFFF),
         entry("braga", listOf("braga", "брага"), fd(5613)),
-        entry("torreense", listOf("torreense", "торренсе"), fd(5614)),
+        entry("torreense", listOf("torreense", "торренсе"), tsdb("byn6c21659694982.png")),
 
         // Нидерланды
         entry("psv", listOf("psv", "псв"), fd(674)),
         entry("feyenoord", listOf("feyenoord", "фейеноорд"), fd(675)),
         entry("ajax", listOf("ajax", "аякс"), fd(678), 0xFFD2122E, 0xFFFFFFFF),
         entry("twente", listOf("twente", "твенте"), fd(666)),
-        entry("az_alkmaar", listOf("az alkmaar", "алкмаар"), fd(668)),
-        entry("nec", listOf("n.e.c", "n.e.c.", "nijmegen", "nec"), fd(677)),
+        entry(
+            "az_alkmaar",
+            listOf("az alkmaar", "алкмаар"),
+            jd("logos/Netherlands%20-%20Eredivisie/AZ%20Alkmaar.png")
+        ),
+        entry(
+            "nec",
+            listOf("n.e.c", "n.e.c.", "nijmegen", "nec"),
+            jd("logos/Netherlands%20-%20Eredivisie/NEC%20Nijmegen.png")
+        ),
 
         // Шотландия
         entry("celtic", listOf("celtic", "селтик"), fd(734), 0xFF018749, 0xFFFFFFFF),
         entry("rangers", listOf("rangers", "рейнджерс"), fd(732)),
 
         // Австрия / Швейцария
-        entry("salzburg", listOf("salzburg", "зальцбург"), fd(1877)),
-        entry("sturm", listOf("sturm", "штурм"), fd(1876)),
+        entry(
+            "salzburg",
+            listOf("salzburg", "зальцбург", "red bull salzburg"),
+            jd("logos/Austria%20-%20Bundesliga/Red%20Bull%20Salzburg.png")
+        ),
+        entry(
+            "sturm",
+            listOf("sturm graz", "sturm", "штурм"),
+            jd("logos/Austria%20-%20Bundesliga/SK%20Sturm%20Graz.png")
+        ),
         entry("lask", listOf("lask", "ласк"), fd(2016), 0xFF111111, 0xFFFFFFFF),
         entry("young_boys", listOf("young boys", "янг бойз"), fd(1871)),
 
@@ -107,22 +133,44 @@ object TeamCrestCatalog {
         entry("dynamo_kyiv", listOf("dynamo kyiv", "dinamo kyiv", "kyiv", "киев", "динамо киев"), fd(1873)),
 
         // Балканы
-        // fd(1897) был placeholder: PNG отдаётся, но это не герб Динамо Загреб.
         entry(
             "dinamo_zagreb",
             listOf("dinamo zagreb", "gnk dinamo", "загреб", "динамо загреб", "dinamo"),
             jd("logos/Croatia%20-%20SuperSport%20HNL/GNK%20Dinamo%20Zagreb.png")
         ),
-        entry("crvena_zvezda", listOf("crvena zvezda", "zvezda", "црвена", "звезда"), fd(1898)),
-        entry("celje", listOf("celje", "целе"), fd(1890)),
+        entry(
+            "crvena_zvezda",
+            listOf("crvena zvezda", "zvezda", "црвена", "звезда"),
+            tsdb("osgmbz1781157114.png")
+        ),
+        // fd(1890) — placeholder, не герб Celje
+        entry("celje", listOf("celje", "целе", "nk celje"), tsdb("amvs371681106952.png")),
 
         // Чехия / Словакия / Венгрия / Польша
-        entry("sparta_prague", listOf("sparta praha", "sparta", "спарта"), fd(1875)),
+        entry(
+            "sparta_prague",
+            listOf("sparta praha", "sparta prague", "sparta", "спарта"),
+            jd("logos/Czech%20Republic%20-%20Chance%20Liga/AC%20Sparta%20Prague.png")
+        ),
         entry("slavia_prague", listOf("slavia praha", "slavia", "славия"), fd(930)),
-        entry("viktoria_plzen", listOf("plzen", "пльзень", "viktoria"), fd(1880)),
+        entry(
+            "viktoria_plzen",
+            listOf("viktoria plzen", "plzen", "пльзень", "viktoria"),
+            jd("logos/Czech%20Republic%20-%20Chance%20Liga/FC%20Viktoria%20Plzen.png")
+        ),
         entry("slovan_bratislava", listOf("slovan bratislava", "bratislava", "s. bratislava", "слован"), fd(7509)),
-        entry("ferencvaros", listOf("ferencvaros", "ференцварош"), fd(1896), 0xFF008000, 0xFFFFFFFF),
-        entry("jagiellonia", listOf("jagiellonia", "ягеллония"), fd(1895)),
+        entry(
+            "ferencvaros",
+            listOf("ferencvaros", "ференцварош"),
+            tsdb("wk17od1688115265.png"),
+            0xFF008000,
+            0xFFFFFFFF
+        ),
+        entry(
+            "jagiellonia",
+            listOf("jagiellonia", "ягеллония"),
+            jd("logos/Poland%20-%20PKO%20BP%20Ekstraklasa/Jagiellonia%20Bialystok.png")
+        ),
         entry(
             "lech_poznan",
             listOf("lech poznan", "lech", "познань"),
@@ -137,7 +185,7 @@ object TeamCrestCatalog {
         entry(
             "lillestrom",
             listOf("lillestrom", "лиллестрем"),
-            jd("history/2021-22/Norway%20-%20Eliteserien/Lillestr%C3%B8m%20SK.png")
+            jd("logos/Norway%20-%20Eliteserien/Lillestr%C3%B8m%20SK.png")
         ),
 
         // Турция
@@ -146,10 +194,20 @@ object TeamCrestCatalog {
         entry("besiktas", listOf("besiktas", "бешикташ"), fd(554), 0xFF111111, 0xFFFFFFFF),
 
         // Греция / Кипр
-        entry("olympiacos", listOf("olympiacos", "олимпиакос"), fd(654)),
-        entry("paok", listOf("paok", "паок"), fd(656)),
+        entry(
+            "olympiacos",
+            listOf("olympiacos", "олимпиакос"),
+            jd("logos/Greece%20-%20Super%20League%201/Olympiacos%20Piraeus.png")
+        ),
+        // fd(656) → 404
+        entry(
+            "paok",
+            listOf("paok", "паок"),
+            jd("logos/Greece%20-%20Super%20League%201/PAOK%20Thessaloniki.png")
+        ),
         entry("aek_athens", listOf("aek athens", "aek", "аек"), fd(1899), 0xFFFFCC00, 0xFF111111),
-        entry("omonia", listOf("omonia", "омония"), fd(1894)),
+        // fd(1894) — placeholder; badge Omonia Nicosia (не Omonia 29M)
+        entry("omonia", listOf("omonia", "омония", "omonia nicosia"), tsdb("nmd7vt1779579017.png")),
         entry(
             "ofi_crete",
             listOf("ofi crete", "ofi", "офи"),
@@ -158,8 +216,12 @@ object TeamCrestCatalog {
 
         // Бельгия
         entry("club_brugge", listOf("club brugge", "brugge", "брюгге"), fd(851), 0xFF0066B2, 0xFF111111),
-        entry("union_sg", listOf("union sg", "юнион", "saint-gilloise"), fd(688)),
-        // fd(660) → 404 на crests.football-data.org
+        // fd(688) → 404 — критично для ЛЕ (Union SG)
+        entry(
+            "union_sg",
+            listOf("union sg", "union saint-gilloise", "юнион", "saint-gilloise"),
+            jd("logos/Belgium%20-%20Jupiler%20Pro%20League/Union%20Saint-Gilloise.png")
+        ),
         entry(
             "anderlecht",
             listOf("anderlecht", "rsc anderlecht", "андерлехт"),
@@ -188,10 +250,13 @@ object TeamCrestCatalog {
             jd("logos/Bulgaria%20-%20efbet%20Liga/Ludogorets%20Razgrad.png")
         ),
         entry("sabah", listOf("sabah", "сабах"), fd(10233)),
-        entry("fcsb", listOf("fcsb", "стеауа", "стяуа"), fd(1891))
-        // RFS / Qarabag / Ararat-Armenia: нет проверенного уникального crest URL.
-        // Намеренно НЕ маппим на чужой football-data ID — лучше initials, чем чужой герб.
-        // Dynamic resolver может найти их позже при появлении в open catalog.
+        entry("fcsb", listOf("fcsb", "стеауа", "стяуа"), tsdb("123g021759420850.png")),
+        // ЛЕ 2026: Ararat-Armenia отсутствует в FD/jsDelivr
+        entry(
+            "ararat_armenia",
+            listOf("ararat-armenia", "ararat armenia", "ararat", "арарат"),
+            tsdb("g396se1596470244.png")
+        )
     )
 
     private val exactAliasIndex: Map<String, TeamCrestEntry>
@@ -275,4 +340,5 @@ object TeamCrestCatalog {
 
     private fun fd(id: Int) = "$FD/$id.png"
     private fun jd(path: String) = "$JD/$path"
+    private fun tsdb(file: String) = "$TSDB/$file"
 }

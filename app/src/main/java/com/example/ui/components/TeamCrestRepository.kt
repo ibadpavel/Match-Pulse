@@ -24,7 +24,7 @@ object TeamCrestRepository {
 
     private const val CDN_JSDELIVR_LOGOS =
         "https://cdn.jsdelivr.net/gh/luukhopman/football-logos@master"
-    private const val CACHE_VERSION = 2
+    private const val CACHE_VERSION = 3
     private const val PREFS_NAME = "team_badge_cache_v$CACHE_VERSION"
     private const val MIN_DYNAMIC_SCORE = 0.72
 
