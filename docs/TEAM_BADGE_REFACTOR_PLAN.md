@@ -166,14 +166,25 @@ Compose `LazyColumn` + `key = { it.id }` + `remember(teamName)` — класси
 
 ---
 
+## Статус реализации (этапы 0–4)
+
+| Этап | Статус | Что сделано |
+|------|--------|-------------|
+| 0 | ✅ | Тесты uniqueness, Bayern/Bayer, бывшие shared-ID пары, scoring |
+| 1 | ✅ | Уникальные URL; jsDelivr для Maccabi/Beer-Sheva/Levski/Ludogorets/Lech; Sabah `10233`; cache `v2` |
+| 2 | ✅ | `TeamCrestCatalog` — exact + longest alias с word-boundary |
+| 3 | ✅ | Scored dynamic (`MIN_DYNAMIC_SCORE=0.72`), mutex на GitHub tree, prefs только для dynamic |
+| 4 | ✅ | Слои: `TeamNameNormalizer` / `TeamCrestCatalog` / `TeamCrestRepository` / `TeamBadge` UI |
+| 5 | ⏳ | Не в этом PR (crest из API в `MatchEntity`) |
+
 ## Критерии готовности
 
-- [ ] Нет двух разных клубов с одним crest URL в статическом каталоге.
-- [ ] `"Байерн"` ≠ Leverkusen; `"Байер"` = Leverkusen.
-- [ ] После обновления каталога старый SharedPreferences не отдаёт чужой герб.
-- [ ] Unit-тесты на uniqueness, aliases, Bayern/Bayer, дубликаты бывших пар.
-- [ ] Dynamic path не кэширует слабые совпадения.
-- [ ] UI без регрессий: карточка матча по-прежнему показывает бейдж / initials.
+- [x] Нет двух разных клубов с одним crest URL в статическом каталоге.
+- [x] `"Байерн"` ≠ Leverkusen; `"Байер"` = Leverkusen.
+- [x] После обновления каталога старый SharedPreferences не отдаёт чужой герб (`team_badge_cache_v2`).
+- [x] Unit-тесты на uniqueness, aliases, Bayern/Bayer, дубликаты бывших пар.
+- [x] Dynamic path не кэширует слабые совпадения.
+- [ ] UI без регрессий: карточка матча по-прежнему показывает бейдж / initials (проверяется сборкой APK + unit tests).
 
 ---
 
